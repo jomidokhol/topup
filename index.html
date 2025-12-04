@@ -119,6 +119,8 @@ body.dark-mode .game-card { border: 1px solid rgba(255,255,255,0.08); }
 .game-card img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
 .game-card .game-info-container { padding: 12px; background-color: var(--card-bg-color); flex-grow: 1; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid rgba(0,0,0,0.03); }
 .game-card .game-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+
+/* Badge with Reflection Animation (UPDATED) */
 .card-badge {
     position: absolute; top: 0; right: 0; background-color: transparent; color: inherit;
     font-size: 16px; font-weight: 700; padding: 4px 10px; min-width: 30px;
@@ -126,6 +128,26 @@ body.dark-mode .game-card { border: 1px solid rgba(255,255,255,0.08); }
     z-index: 5; overflow: hidden; white-space: nowrap; border-radius: 0 0 0 15px; 
     text-shadow: 0 2px 5px rgba(0,0,0,0.15); 
 }
+
+.card-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    transform: skewX(-25deg);
+    animation: glassReflect 2.5s infinite linear;
+    filter: blur(3px);
+}
+
+@keyframes glassReflect {
+    0% { left: -150%; }
+    50% { left: 200%; }
+    100% { left: 200%; }
+}
+
 .unavailable-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background-color: rgba(255, 255, 255, 0.7); display: none;
@@ -142,7 +164,7 @@ body.dark-mode .unavailable-overlay { background-color: rgba(28, 28, 30, 0.7); }
     border: 2px solid var(--primary-purple); border-radius: var(--border-radius-large);
     padding: 20px; padding-top: 45px; background: linear-gradient(45deg, var(--light-purple), transparent);
     box-shadow: 0 0 15px 3px rgba(123, 97, 255, 0.5); animation: pulse-glow 2.5s infinite alternate; 
-    display: flex; justify-content: center; 
+    display: flex; justify-content: center; /* Ensures single item centering */
 }
 @keyframes pulse-glow { from { box-shadow: 0 0 15px 3px rgba(123, 97, 255, 0.4); } to { box-shadow: 0 0 25px 8px rgba(123, 97, 255, 0.6); } }
 .event-header-tab {
@@ -155,6 +177,7 @@ body.dark-mode .unavailable-overlay { background-color: rgba(28, 28, 30, 0.7); }
     padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: 700;
     letter-spacing: 1px; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex; align-items: center; gap: 5px;
+    white-space: nowrap; /* Ensures timer stays on one line */
 }
 body.dark-mode .event-header-tab { background-color: var(--background-color); }
 body.dark-mode .event-timer { background-color: #2C2C2E; }
@@ -525,7 +548,13 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    timerEl.innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
+                    
+                    const f = (n) => n < 10 ? '0' + n : n; // Helper to add zero padding
+                    
+                    // Logic: Hide days if 0, keep in single line
+                    const daysStr = days > 0 ? `${f(days)}d ` : '';
+                    timerEl.innerHTML = daysStr + `${f(hours)}:${f(minutes)}:${f(seconds)}`;
+                    
                 }, 1000);
             } else if (wrapper) {
                 wrapper.style.display = 'none';
