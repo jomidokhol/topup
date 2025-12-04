@@ -511,6 +511,14 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     if (distance < 0) {
                         clearInterval(eventTimerInterval);
                         timerEl.parentElement.innerHTML = "EXPIRED";
+                        
+                        // FIX: Disable cards in event section when expired
+                        const eventCards = document.querySelectorAll('#eventSectionContainer .game-card');
+                        eventCards.forEach(card => {
+                            card.classList.add('disabled');
+                            card.onclick = null; 
+                        });
+                        
                         return;
                     }
                     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
