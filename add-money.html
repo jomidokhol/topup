@@ -11,6 +11,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Add Money - Vercel Topup BD</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 /* Core CSS Variables */
@@ -257,9 +270,23 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
                 
                 selectedAddMoneyPayment = method;
                 
+                // Check if it's Bkash or Nagad
+                const mName = method.name.toLowerCase();
+                const isGateway = mName.includes('bkash') || mName.includes('nagad');
+                
                 const detailsSection = document.getElementById('addMoneyPaymentDetailsSection');
-                detailsSection.style.display = 'block';
-                document.getElementById('addMoneyAdminPaymentNumber').innerText = method.number;
+                const btn = document.querySelector('.btn');
+
+                if (isGateway) {
+                    // Hide inputs for Gateway methods
+                    detailsSection.style.display = 'none';
+                    btn.innerText = "পরবর্তী ধাপ"; // "Next Step"
+                } else {
+                    // Show inputs for Manual methods
+                    detailsSection.style.display = 'block';
+                    document.getElementById('addMoneyAdminPaymentNumber').innerText = method.number;
+                    btn.innerText = "রিকোয়েস্ট করুন";
+                }
             };
             
             grid.appendChild(itemHtml);
@@ -270,12 +297,52 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
         if (!currentUser) return;
 
         const amount = parseFloat(document.getElementById('addMoneyAmount').value);
+        if (isNaN(amount) || amount <= 0) {
+            alert('অনুগ্রহ করে সঠিক অ্যামাউন্ট দিন।');
+            return;
+        }
+
+        if (!selectedAddMoneyPayment) {
+            alert('অনুগ্রহ করে পেমেন্ট মেথড সিলেক্ট করুন।');
+            return;
+        }
+
+        // Check for Gateway (Bkash/Nagad) Redirection
+        const mName = selectedAddMoneyPayment.name.toLowerCase();
+        if (mName.includes('bkash') || mName.includes('nagad')) {
+            // Prepare Data for Payment Page (Using 'pendingOrder' key as expected by payment pages)
+            const pendingOrder = {
+                userId: currentUser.uid,
+                gameId: "WALLET_TOPUP", // Placeholder ID
+                gameName: "Add Money",
+                packageAmount: amount, 
+                packagePrice: amount,
+                quantity: 1,
+                totalPrice: amount,
+                paymentMethodName: selectedAddMoneyPayment.name,
+                paymentNumber: selectedAddMoneyPayment.number,
+                paymentLogo: selectedAddMoneyPayment.logoUrl,
+                orderType: 'add_money', // Flag to identify this is not a game purchase
+                playerId: 'Wallet Deposit' 
+            };
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+
+            // Redirect
+            if (mName.includes('bkash')) {
+                window.location.href = 'bkash-payment.html';
+            } else if (mName.includes('nagad')) {
+                window.location.href = 'nagad-payment.html';
+            }
+            return;
+        }
+
+        // Manual Process for other methods
         const userPaymentNumber = document.getElementById('addMoneyUserPaymentNumber').value;
         const transactionId = document.getElementById('addMoneyTransactionId').value;
         const btn = document.querySelector('.btn');
 
-        if (isNaN(amount) || amount <= 0 || !selectedAddMoneyPayment || !userPaymentNumber || !transactionId) {
-            alert('অনুগ্রহ করে সকল তথ্য সঠিকভাবে পূরণ করুন।');
+        if (!userPaymentNumber || !transactionId) {
+            alert('অনুগ্রহ করে পেমেন্ট নম্বর এবং ট্রানজেকশন আইডি দিন।');
             return;
         }
 
