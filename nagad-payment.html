@@ -6,19 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nagad Payment - Vercel topup</title>
     <style>
-        /* ফন্ট ইমপোর্ট (গুগল ফন্টস থেকে - বাংলার জন্য) */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
-
-        * {
-            box-sizing: border-box;
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="google" content="notranslate">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nagad Payment/verceltopup</title>
-    <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Bengali', sans-serif; }
@@ -180,7 +167,7 @@
     window.onload = function() {
         if (!pendingOrder) {
             alert("কোন অর্ডার পাওয়া যায়নি।");
-            window.location.href = 'topup.html';
+            window.location.href = 'index.html'; // Default to home
             return;
         }
         const formattedAmount = parseFloat(pendingOrder.totalPrice).toFixed(2);
@@ -190,7 +177,11 @@
     };
 
     function goBack() {
-        window.location.href = 'topup.html';
+        if(pendingOrder && pendingOrder.orderType === 'add_money') {
+            window.location.href = 'add-money.html';
+        } else {
+            window.location.href = 'topup.html';
+        }
     }
 
     function copyNumber() {
@@ -218,55 +209,84 @@
         btn.disabled = true;
         btn.innerText = "যাচাইকরণ চলছে...";
 
-        let orderData = {
-            userId: currentUser.uid, 
-            game: pendingOrder.gameName,
-            package: pendingOrder.packageAmount,
-            quantity: pendingOrder.quantity,
-            price: parseFloat(pendingOrder.totalPrice),
-            playerId: pendingOrder.playerId,
-            paymentMethod: pendingOrder.paymentMethodName,
-            adminNumber: pendingOrder.paymentNumber,
-            userPaymentNumber: "Manual Input",
-            transactionId: trxID,
-            status: 'Pending',
-            date: firebase.firestore.FieldValue.serverTimestamp()
-        };
+        // CASE 1: ADD MONEY REQUEST
+        if (pendingOrder.orderType === 'add_money') {
+            const requestData = {
+                userId: currentUser.uid,
+                amount: parseFloat(pendingOrder.totalPrice),
+                paymentMethod: pendingOrder.paymentMethodName,
+                adminNumber: pendingOrder.paymentNumber,
+                userPaymentNumber: "Manual Input",
+                transactionId: trxID,
+                status: 'Pending',
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-        const gameRef = db.collection('games').doc(pendingOrder.gameId);
-
-        try {
-            await db.runTransaction(async (transaction) => {
-                const gameDoc = await transaction.get(gameRef);
-                if (!gameDoc.exists) throw "এই প্রোডাক্টটি এখন আর পাওয়া যাচ্ছে না।";
-
-                const gameData = gameDoc.data();
-                const packages = gameData.packages || [];
-                const packageIndex = packages.findIndex(p => p.amount === pendingOrder.packageAmount && p.price === pendingOrder.packagePrice);
-                
-                if (packageIndex === -1) throw "এই প্যাকেজটি এখন আর পাওয়া যাচ্ছে না।";
-                
-                const currentStock = parseInt(packages[packageIndex].stock);
-                if (isNaN(currentStock) || currentStock < pendingOrder.quantity) throw "দুঃখিত! স্টকে পর্যাপ্ত পরিমাণ নেই।";
-
-                // Deduct Stock
-                packages[packageIndex].stock = currentStock - pendingOrder.quantity;
-                transaction.update(gameRef, { packages: packages });
-                
-                // Create Order
-                transaction.set(db.collection('orders').doc(), orderData);
+            db.collection('moneyRequests').add(requestData)
+            .then(() => {
+                alert("আপনার অ্যাড মানি রিকোয়েস্ট সফল হয়েছে!");
+                localStorage.removeItem('pendingOrder');
+                window.location.href = 'wallet.html'; // Redirect to wallet for Add Money
+            })
+            .catch((error) => {
+                alert("রিকোয়েস্ট করতে সমস্যা হয়েছে: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "VERIFY";
             });
 
-            // Success
-            localStorage.setItem('lastOrder', JSON.stringify(orderData));
-            localStorage.removeItem('pendingOrder');
-            window.location.href = 'order-confirmation.html';
+        } 
+        // CASE 2: GAME TOPUP ORDER (With Stock Management)
+        else {
+            let orderData = {
+                userId: currentUser.uid, 
+                game: pendingOrder.gameName,
+                package: pendingOrder.packageAmount,
+                quantity: pendingOrder.quantity,
+                price: parseFloat(pendingOrder.totalPrice),
+                playerId: pendingOrder.playerId,
+                paymentMethod: pendingOrder.paymentMethodName,
+                adminNumber: pendingOrder.paymentNumber,
+                userPaymentNumber: "Manual Input",
+                transactionId: trxID,
+                status: 'Pending',
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-        } catch (error) {
-            console.error(error);
-            alert("সমস্যা হয়েছে: " + (error.message || error));
-            btn.disabled = false;
-            btn.innerText = "VERIFY";
+            const gameRef = db.collection('games').doc(pendingOrder.gameId);
+
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const gameDoc = await transaction.get(gameRef);
+                    if (!gameDoc.exists) throw "এই প্রোডাক্টটি এখন আর পাওয়া যাচ্ছে না।";
+
+                    const gameData = gameDoc.data();
+                    const packages = gameData.packages || [];
+                    const packageIndex = packages.findIndex(p => p.amount === pendingOrder.packageAmount && p.price === pendingOrder.packagePrice);
+                    
+                    if (packageIndex === -1) throw "এই প্যাকেজটি এখন আর পাওয়া যাচ্ছে না।";
+                    
+                    const currentStock = parseInt(packages[packageIndex].stock);
+                    if (isNaN(currentStock) || currentStock < pendingOrder.quantity) throw "দুঃখিত! স্টকে পর্যাপ্ত পরিমাণ নেই।";
+
+                    // Deduct Stock
+                    packages[packageIndex].stock = currentStock - pendingOrder.quantity;
+                    transaction.update(gameRef, { packages: packages });
+                    
+                    // Create Order
+                    transaction.set(db.collection('orders').doc(), orderData);
+                });
+
+                // Success
+                localStorage.setItem('lastOrder', JSON.stringify(orderData));
+                localStorage.removeItem('pendingOrder');
+                window.location.href = 'order-confirmation.html';
+
+            } catch (error) {
+                console.error(error);
+                alert("সমস্যা হয়েছে: " + (error.message || error));
+                btn.disabled = false;
+                btn.innerText = "VERIFY";
+            }
         }
     }
 </script>
