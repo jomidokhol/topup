@@ -385,34 +385,45 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
         element.classList.add('selected');
         
         const detailsSection = document.getElementById('paymentDetailsSection');
-        detailsSection.style.display = 'block';
-        
         const totalPrice = selectedPackage ? (parseFloat(selectedPackage.price) * currentQuantity).toFixed(2) : 0;
 
         if (type === 'wallet') {
             selectedPayment = { name: 'Wallet', type: 'wallet' };
+            detailsSection.style.display = 'block';
             detailsSection.innerHTML = `
                 <div class="wallet-balance-info">
                     <p>মোট মূল্য: <strong id="displayPackagePrice">৳ ${totalPrice}</strong></p>
                     <p>আপনার ওয়ালেট থেকে টাকা কাটা হবে।</p>
                 </div>`;
         } else {
-            selectedPayment = { ...methodData, type: 'manual' };
-            detailsSection.innerHTML = `
-                <p style="text-align: center; font-weight: 600; margin-bottom: 10px;">
-                    নিচের নম্বরে টাকা পাঠান: <br>
-                    <span style="color: var(--primary-purple); font-size: 18px;">${methodData.number}</span>
-                    <i class="fa-regular fa-copy copy-btn" onclick="copyToClipboard('${methodData.number}')"></i>
-                </p>
-                 <p style="text-align:center; margin-bottom: 10px; font-size: 14px;">মোট টাকার পরিমাণ: <strong id="displayPackagePrice">৳ ${totalPrice}</strong></p>
-                <div class="input-group" style="margin-top: 15px;">
-                    <label>আপনার পেমেন্ট নম্বর</label>
-                    <input type="tel" id="userPaymentNumber" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন">
-                </div>
-                <div class="input-group">
-                    <label>ট্রানজেকশন আইডি</label>
-                    <input type="text" id="transactionId" placeholder="টাকা পাঠানোর পর প্রাপ্ত আইডি">
-                </div>`;
+            // Check name for Bkash or Nagad to handle redirection
+            const mName = methodData.name.toLowerCase();
+            
+            if (mName.includes('bkash') || mName.includes('nagad')) {
+                // HIDE inputs for Bkash and Nagad. Just mark as selected.
+                detailsSection.style.display = 'none';
+                detailsSection.innerHTML = '';
+                selectedPayment = { ...methodData, type: 'gateway' }; // 'gateway' flag for external page logic
+            } else {
+                // Regular Manual Method for others (e.g. Rocket/Upay if added later)
+                selectedPayment = { ...methodData, type: 'manual' };
+                detailsSection.style.display = 'block';
+                detailsSection.innerHTML = `
+                    <p style="text-align: center; font-weight: 600; margin-bottom: 10px;">
+                        নিচের নম্বরে টাকা পাঠান: <br>
+                        <span style="color: var(--primary-purple); font-size: 18px;">${methodData.number}</span>
+                        <i class="fa-regular fa-copy copy-btn" onclick="copyToClipboard('${methodData.number}')"></i>
+                    </p>
+                     <p style="text-align:center; margin-bottom: 10px; font-size: 14px;">মোট টাকার পরিমাণ: <strong id="displayPackagePrice">৳ ${totalPrice}</strong></p>
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>আপনার পেমেন্ট নম্বর</label>
+                        <input type="tel" id="userPaymentNumber" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন">
+                    </div>
+                    <div class="input-group">
+                        <label>ট্রানজেকশন আইডি</label>
+                        <input type="text" id="transactionId" placeholder="টাকা পাঠানোর পর প্রাপ্ত আইডি">
+                    </div>`;
+            }
         }
     }
 
@@ -424,11 +435,41 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
         if (!selectedPackage) { alert('দয়া করে একটি প্যাকেজ সিলেক্ট করুন।'); return; }
         if (!selectedPayment) { alert('দয়া করে পেমেন্ট মেথড সিলেক্ট করুন।'); return; }
 
+        const totalPrice = parseFloat(selectedPackage.price) * currentQuantity;
+
+        // Logic for Bkash and Nagad (Redirection)
+        if (selectedPayment.type === 'gateway') {
+            // Save temporary order data for the next page
+            const pendingOrder = {
+                userId: currentUser.uid,
+                gameId: selectedGameData.id,
+                gameName: selectedGameData.name,
+                packageAmount: selectedPackage.amount,
+                packagePrice: selectedPackage.price,
+                quantity: currentQuantity,
+                totalPrice: totalPrice,
+                playerId: playerId,
+                paymentMethodName: selectedPayment.name,
+                paymentNumber: selectedPayment.number,
+                paymentLogo: selectedPayment.logoUrl
+            };
+            localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+
+            // Redirect based on name
+            const mName = selectedPayment.name.toLowerCase();
+            if (mName.includes('bkash')) {
+                window.location.href = 'bkash-payment.html';
+            } else if (mName.includes('nagad')) {
+                window.location.href = 'nagad-payment.html';
+            }
+            return; // Stop here, do not create Firestore order yet
+        }
+
+        // Logic for Wallet and Standard Manual Payments
         const btn = document.querySelector('.btn');
         btn.disabled = true;
         btn.innerText = "প্রসেস হচ্ছে...";
 
-        const totalPrice = parseFloat(selectedPackage.price) * currentQuantity;
         let orderData = {
             userId: currentUser.uid,
             game: selectedGameData.name,
@@ -469,6 +510,7 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
                     orderData.userPaymentNumber = 'N/A';
                     orderData.adminNumber = 'N/A';
                 } else {
+                    // This block runs for manual methods NOT Bkash/Nagad
                     const userNum = document.getElementById('userPaymentNumber').value;
                     const trxId = document.getElementById('transactionId').value;
                     if (!userNum || !trxId) throw "দয়া করে পেমেন্ট নম্বর এবং ট্রানজেকশন আইডি দিন।";
