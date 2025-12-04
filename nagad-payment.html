@@ -4,218 +4,107 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nagad Payment/verceltopup</title>
+    <title>Nagad Payment - Vercel topup</title>
     <style>
         /* ফন্ট ইমপোর্ট (গুগল ফন্টস থেকে - বাংলার জন্য) */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans Bengali', sans-serif;
-        }
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagad Payment/verceltopup</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Bengali', sans-serif; }
 
         body {
-            /* পেছনের প্যাটার্ন ব্যাকগ্রাউন্ড (স্ক্রিনশটের মতো) */
             background-color: #f4f6f9;
-            background-image: 
-                radial-gradient(#e0e0e0 1px, transparent 1px),
-                radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
             background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding-top: 20px;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; padding-top: 20px;
         }
 
-        /* মেইন কন্টেইনার */
-        .container {
-            width: 100%;
-            max-width: 400px; /* মোবাইলের মতো সাইজ */
-            margin: 0 auto;
-            padding-bottom: 20px;
-        }
+        .container { width: 100%; max-width: 400px; margin: 0 auto; padding-bottom: 20px; }
 
-        /* হেডার আইকন */
         .header-icons {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            align-items: center;
+            display: flex; justify-content: space-between; padding: 10px 20px;
+            background: white; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); align-items: center;
         }
-        .header-icons span {
-            color: #5f6368;
-            cursor: pointer;
-            font-size: 18px;
-        }
+        .header-icons span { color: #5f6368; cursor: pointer; font-size: 18px; }
 
-        /* লোগো সেকশন */
-        .logo-section {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .logo-section img {
-            width: 260px;
-        }
+        .logo-section { text-align: center; margin-bottom: 20px; }
+        .logo-section img { width: 260px; }
 
-        /* ওয়ালেট এবং টাকার বক্স */
         .white-box {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            font-weight: 600;
-            color: #444;
+            background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 10px;
+            display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-weight: 600; color: #444;
         }
         .wallet-icon {
-            width: 30px;
-            height: 30px;
-            margin-right: 15px;
-            border: 1px solid #ddd;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #999;
+            width: 30px; height: 30px; margin-right: 15px; border: 1px solid #ddd;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: #999;
         }
 
-        /* লাল ব্যাকগ্রাউন্ড সেকশন (মেইন) */
         .red-card {
-            background-color: #cf1d23; /* নগদ রেড কালার */
-            color: white;
-            padding: 20px;
-            border-radius: 8px 8px 0 0;
-            margin-top: 10px;
-            position: relative;
+            background-color: #cf1d23; color: white; padding: 20px;
+            border-radius: 8px 8px 0 0; margin-top: 10px; position: relative;
         }
 
-        .section-title {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 16px;
-            font-weight: 600;
-        }
+        .section-title { text-align: center; margin-bottom: 15px; font-size: 16px; font-weight: 600; }
 
-        /* ইনপুট ফিল্ড */
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
         .input-group input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            border: none;
-            font-size: 14px;
-            outline: none;
-        }
-        .input-group input::placeholder {
-            color: #999;
+            width: 100%; padding: 12px; border-radius: 5px; border: none;
+            font-size: 14px; outline: none;
         }
 
-        /* ইন্সট্রাকশন লিস্ট */
-        .instructions {
-            list-style: none;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .instructions li {
-            position: relative;
-            padding-left: 15px;
-            margin-bottom: 12px;
-        }
-        .instructions li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
+        .instructions { list-style: none; font-size: 13px; line-height: 1.6; }
+        .instructions li { position: relative; padding-left: 15px; margin-bottom: 12px; }
+        .instructions li::before { content: "•"; position: absolute; left: 0; font-weight: bold; }
 
-        /* হাইলাইট টেক্সট */
-        .highlight-yellow {
-            color: #ffe600;
-            font-weight: bold;
-        }
-        .highlight-bold {
-            font-weight: bold;
-        }
+        .highlight-yellow { color: #ffe600; font-weight: bold; }
 
-        /* কপি বাটন */
         .copy-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            margin-left: 5px;
-            display: inline-flex;
-            align-items: center;
-        }
-        .copy-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+            color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;
+            cursor: pointer; margin-left: 5px; display: inline-flex; align-items: center;
         }
 
-        /* ভেরিফাই বাটন */
         .verify-btn {
-            width: 100%;
-            background-color: #cf1d23;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px; /* সম্পূর্ণ বাটনটি আলাদা দেখতে */
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%; background-color: #cf1d23; color: white; border: none;
+            padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
         }
-        .verify-btn:hover {
-            background-color: #b0151b;
-        }
-        .verify-btn:disabled {
-            background-color: #e57373;
-            cursor: not-allowed;
-        }
-        
-        /* লাল কার্ডের নিচের অংশ মেলানোর জন্য */
-        .red-card-footer-spacing {
-            padding-bottom: 10px;
-        }
-
+        .verify-btn:hover { background-color: #b0151b; }
+        .verify-btn:disabled { background-color: #e57373; cursor: not-allowed; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- উপরের নেভিগেশন বার (আইকন) -->
     <div class="header-icons">
-        <span onclick="goBack()">&#8592;</span> <!-- Back Arrow -->
+        <span onclick="goBack()">&#8592;</span>
         <div style="display: flex; gap: 15px;">
-            <span>Vercel Top up</span> <!-- Language Icon mimic -->
-            <span onclick="goBack()">&#10005;</span> <!-- Close Icon -->
+            <span>Vercel Top up</span>
+            <span onclick="goBack()">&#10005;</span>
         </div>
     </div>
 
-    <!-- লোগো -->
     <div class="logo-section">
-        <!-- নগদের লোগো লিংক ব্যবহার করা হয়েছে -->
         <img src="https://i.ibb.co.com/4Z8HgrQV/Nagad-Logo-horizontally-Pngsource-VGQEUYU1.png" alt="Nagad Logo">
     </div>
 
-    <!-- ওয়ালেট ইনফো -->
     <div class="white-box">
         <div class="wallet-icon">
             <img src="https://i.ibb.co.com/4Z8HgrQV/Nagad-Logo-horizontally-Pngsource-VGQEUYU1.png" alt="" style="width: 15px; opacity: 0.5;">
@@ -223,12 +112,10 @@
         <span>Nagad pay</span>
     </div>
 
-    <!-- টাকার পরিমাণ -->
     <div class="white-box" id="amountDisplayBox">
-        ৳ <span id="mainAmountDisplay">loading...</span>
+        ৳ <span id="mainAmountDisplay">...</span>
     </div>
 
-    <!-- লাল এরিয়া (ফরম এবং নিয়মাবলী) -->
     <div class="red-card">
         <div class="section-title">ট্রানজেকশন আইডি দিন</div>
 
@@ -241,18 +128,16 @@
             <li>"<span class="highlight-yellow">Send Money</span>" -এ ক্লিক করুন।</li>
             <li>
                 প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুনঃ <span class="highlight-yellow" id="adminNumberDisplay">loading...</span>
-                <button class="copy-btn" onclick="copyNumber()">Copy
-                </button>
+                <button class="copy-btn" onclick="copyNumber()">Copy</button>
             </li>
-            <li>টাকার পরিমাণঃ <span class="highlight-yellow" id="instructionAmountDisplay">loading...</span></li>
+            <li>টাকার পরিমাণঃ <span class="highlight-yellow" id="instructionAmountDisplay">...</span></li>
             <li>নিশ্চিত করতে এখন আপনার Nagad মোবাইল মেনু পিন লিখুন।</li>
             <li>সবকিছু ঠিক থাকলে, আপনি Nagad থেকে একটি নিশ্চিতকরণ বার্তা পাবেন।</li>
             <li>এখন উপরের বক্সে আপনার <span class="highlight-yellow">Transaction ID</span> দিন এবং নিচে <span class="highlight-yellow">VERIFY</span> বাটনে ক্লিক করুন।</li>
         </ul>
     </div>
 
-    <!-- ভেরিফাই বাটন -->
-    <button class="verify-btn" id="verifyBtn" onclick="verifyPayment()">VERIFY</button>
+    <button class="verify-btn" id="verifyBtn" onclick="verifyPayment()" disabled>অপেক্ষা করুন...</button>
 
 </div>
 
@@ -273,19 +158,31 @@
     };
 
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     let pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+    let currentUser = null;
 
-    // Init Logic
+    // Check Auth State First
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            // Enable button only when user is ready
+            const btn = document.getElementById('verifyBtn');
+            btn.disabled = false;
+            btn.innerText = "VERIFY";
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+
     window.onload = function() {
         if (!pendingOrder) {
             alert("কোন অর্ডার পাওয়া যায়নি।");
             window.location.href = 'topup.html';
             return;
         }
-
-        // Update UI with Data
         const formattedAmount = parseFloat(pendingOrder.totalPrice).toFixed(2);
         document.getElementById('mainAmountDisplay').innerText = formattedAmount;
         document.getElementById('instructionAmountDisplay').innerText = formattedAmount;
@@ -296,7 +193,6 @@
         window.location.href = 'topup.html';
     }
 
-    // নম্বর কপি করার ফাংশন
     function copyNumber() {
         if(pendingOrder && pendingOrder.paymentNumber) {
             navigator.clipboard.writeText(pendingOrder.paymentNumber).then(() => {
@@ -305,8 +201,12 @@
         }
     }
 
-    // ভেরিফাই বাটন ফাংশন
     async function verifyPayment() {
+        if (!currentUser) {
+            alert("ব্যবহারকারী শনাক্ত করা যাচ্ছে না।");
+            return;
+        }
+
         const trxID = document.getElementById('trxID').value.trim();
         const btn = document.getElementById('verifyBtn');
 
@@ -318,9 +218,8 @@
         btn.disabled = true;
         btn.innerText = "যাচাইকরণ চলছে...";
 
-         // Prepare Final Order Data
-         let orderData = {
-            userId: pendingOrder.userId,
+        let orderData = {
+            userId: currentUser.uid, 
             game: pendingOrder.gameName,
             package: pendingOrder.packageAmount,
             quantity: pendingOrder.quantity,
@@ -343,7 +242,6 @@
 
                 const gameData = gameDoc.data();
                 const packages = gameData.packages || [];
-                // Find matching package
                 const packageIndex = packages.findIndex(p => p.amount === pendingOrder.packageAmount && p.price === pendingOrder.packagePrice);
                 
                 if (packageIndex === -1) throw "এই প্যাকেজটি এখন আর পাওয়া যাচ্ছে না।";
@@ -365,6 +263,7 @@
             window.location.href = 'order-confirmation.html';
 
         } catch (error) {
+            console.error(error);
             alert("সমস্যা হয়েছে: " + (error.message || error));
             btn.disabled = false;
             btn.innerText = "VERIFY";
