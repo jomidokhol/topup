@@ -72,16 +72,13 @@ body {
 body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1px solid rgba(255,255,255,0.05); }
 .header-brand { display: flex; align-items: center; gap: 12px; overflow: hidden; }
 
-/* MODIFIED: Removed background color */
 .header-logo { 
     width: 42px; height: 42px; 
     border-radius: 12px; 
     object-fit: cover; 
-    background-color: transparent; /* Changed from var(--primary-purple) */
-    /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); Optional: Remove shadow if needed */
+    background-color: transparent;
 }
 
-/* MODIFIED: Added clamp for responsive font size and nowrap to prevent breaking */
 .header-title { 
     font-size: clamp(16px, 5vw, 20px); 
     font-weight: 800; 
@@ -92,18 +89,37 @@ body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1p
     text-overflow: ellipsis;
 }
 
-.header .profile-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .header-right-icons { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
 
-/* Wallet in Header */
+/* Profile & Online Status Wrapper */
+.profile-wrapper { position: relative; display: flex; align-items: center; }
+.header .profile-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+/* UPDATED: Status Dot */
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--card-bg-color);
+    background-color: var(--secondary-text-color); /* Default offline */
+    z-index: 10;
+}
+.status-dot.online { background-color: #34C759; box-shadow: 0 0 5px rgba(52, 199, 89, 0.5); }
+.status-dot.offline { background-color: #FF3B30; }
+
+
+/* Wallet in Header - UPDATED: Clickable */
 #headerWalletDisplay {
     display: none; align-items: center; gap: 8px;
     background-color: var(--light-purple); padding: 6px 12px; border-radius: 20px;
-    white-space: nowrap; /* MODIFIED: Prevent breaking */
+    white-space: nowrap; cursor: pointer; transition: transform 0.2s;
 }
+#headerWalletDisplay:active { transform: scale(0.95); }
 #headerWalletDisplay i { color: var(--primary-purple); }
 
-/* MODIFIED: Added clamp for responsive font size */
 #headerWalletBalance { 
     font-size: clamp(12px, 4vw, 14px); 
     font-weight: 700; 
@@ -121,19 +137,42 @@ body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1p
     color: var(--primary-text-color); padding-left: 100%; 
     animation: marquee 15s linear infinite;
 }
+.marquee-separator {
+    margin: 0 10px;
+    color: var(--accent-red);
+    font-weight: 800;
+    font-size: 16px;
+    vertical-align: middle;
+}
 @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-/* Slider */
+/* Slider & Indicators */
 .slider-container { width: 100%; height: 180px; margin-bottom: 30px; border-radius: var(--border-radius-large); overflow: hidden; position: relative; box-shadow: var(--soft-shadow); }
-.slider { display: flex; height: 100%; transition: transform 0.5s ease-in-out; }
+.slider { display: flex; height: 100%; transition: transform 0.5s ease-in-out; cursor: grab; }
+.slider:active { cursor: grabbing; }
 .slide { min-width: 100%; height: 100%; }
+.slide img { width: 100%; height: 100%; object-fit: fill; display: block; pointer-events: none; }
 
-/* MODIFIED: Changed object-fit to fill/contain to prevent cutting off */
-.slide img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: fill; /* Use 'fill' to force fit the box, or 'contain' to show full image with gaps */
-    display: block; 
+.slider-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+.slider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s;
+}
+.slider-dot.active {
+    background-color: var(--primary-purple);
+    width: 18px;
+    border-radius: 4px;
 }
 
 /* Game Grid & Cards */
@@ -153,7 +192,7 @@ body.dark-mode .game-card { border: 1px solid rgba(255,255,255,0.08); }
 .game-card .game-info-container { padding: 12px; background-color: var(--card-bg-color); flex-grow: 1; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid rgba(0,0,0,0.03); }
 .game-card .game-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
 
-/* Badge with Reflection Animation (UPDATED) */
+/* Badge with Reflection Animation */
 .card-badge {
     position: absolute; top: 0; right: 0; background-color: transparent; color: inherit;
     font-size: 16px; font-weight: 700; padding: 4px 10px; min-width: 30px;
@@ -197,7 +236,7 @@ body.dark-mode .unavailable-overlay { background-color: rgba(28, 28, 30, 0.7); }
     border: 2px solid var(--primary-purple); border-radius: var(--border-radius-large);
     padding: 20px; padding-top: 45px; background: linear-gradient(45deg, var(--light-purple), transparent);
     box-shadow: 0 0 15px 3px rgba(123, 97, 255, 0.5); animation: pulse-glow 2.5s infinite alternate; 
-    display: flex; justify-content: center; /* Ensures single item centering */
+    display: flex; justify-content: center; 
 }
 @keyframes pulse-glow { from { box-shadow: 0 0 15px 3px rgba(123, 97, 255, 0.4); } to { box-shadow: 0 0 25px 8px rgba(123, 97, 255, 0.6); } }
 .event-header-tab {
@@ -210,7 +249,7 @@ body.dark-mode .unavailable-overlay { background-color: rgba(28, 28, 30, 0.7); }
     padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: 700;
     letter-spacing: 1px; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex; align-items: center; gap: 5px;
-    white-space: nowrap; /* Ensures timer stays on one line */
+    white-space: nowrap; 
 }
 body.dark-mode .event-header-tab { background-color: var(--background-color); }
 body.dark-mode .event-timer { background-color: #2C2C2E; }
@@ -237,14 +276,7 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
 }
 .nav-item-center .icon-bg i { color: white; font-size: 24px; margin: 0; }
 
-/* Status & Footer */
-.status-indicator { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: rgba(0,0,0,0.05); }
-body.dark-mode .status-indicator { background: rgba(255,255,255,0.1); }
-.status-indicator.online { background-color: rgba(52, 199, 89, 0.15); color: #34C759; }
-.status-indicator.offline { background-color: rgba(255, 59, 48, 0.15); color: #FF3B30; }
-.status-indicator .dot { width: 8px; height: 8px; border-radius: 50%; background-color: #FF3B30; }
-.status-indicator.online .dot { background-color: #34C759; }
-
+/* Footer */
 #copyright-footer { text-align: center; padding: 20px 0; color: var(--secondary-text-color); font-size: 12px; margin-top: 20px; }
 
 /* Popup */
@@ -266,29 +298,32 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
             <h1 class="header-title" id="headerAppName">Vercel Top Up</h1>
         </div>
         <div class="header-right-icons">
-             <div id="onlineStatus" class="status-indicator offline">
-                <span class="dot"></span>
-                <span id="onlineStatusText">Offline</span>
-            </div>
-            
-            <div id="headerWalletDisplay">
+            <!-- UPDATED: Wallet with Click Action -->
+            <div id="headerWalletDisplay" onclick="checkAuthAndGo('add-money.html')">
                 <i class="fa-solid fa-wallet"></i>
                 <span id="headerWalletBalance">৳ 0.00</span>
             </div>
             
-            <i id="headerGuestIcon" class="fa-solid fa-circle-user" style="font-size: 38px; color: var(--secondary-text-color); cursor: pointer; display: block;" onclick="window.location.href='login.html'"></i>
-            <img id="headerProfileAvatar" src="https://i.ibb.co/74CkxSP/avatar.png" alt="Avatar" class="profile-avatar" onclick="window.location.href='profile.html'" style="display: none;">
+            <!-- UPDATED: Profile Wrapper with Status Dot -->
+            <div class="profile-wrapper">
+                <i id="headerGuestIcon" class="fa-solid fa-circle-user" style="font-size: 38px; color: var(--secondary-text-color); cursor: pointer; display: block;" onclick="window.location.href='login.html'"></i>
+                <img id="headerProfileAvatar" src="https://i.ibb.co/74CkxSP/avatar.png" alt="Avatar" class="profile-avatar" onclick="window.location.href='profile.html'" style="display: none;">
+                <!-- Status Dot -->
+                <span id="headerStatusDot" class="status-dot offline"></span>
+            </div>
         </div>
     </header>
 
     <div class="marquee-wrapper">
-        <div class="marquee-content">
-            <span id="headerMarquee">আমাদের শপে আপনাকে স্বাগতম! সবচেয়ে কম দামে গেম টপ-আপ করুন।</span>
+        <div class="marquee-content" id="headerMarquee">
+            আমাদের শপে আপনাকে স্বাগতম! সবচেয়ে কম দামে গেম টপ-আপ করুন।
         </div>
     </div>
 
+    <!-- UPDATED: Slider Container with Dots -->
     <div class="slider-container">
         <div class="slider"></div>
+        <div class="slider-dots"></div>
     </div>
     
     <div id="eventSectionContainer"></div>
@@ -351,8 +386,10 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
 
     // Slider Variables
     const slider = document.querySelector('.slider');
+    const dotsContainer = document.querySelector('.slider-dots');
     let currentSlide = 0;
     let slideInterval;
+    let startX, moveX, isDragging = false;
 
     // Theme Check
     if (localStorage.getItem('theme') === 'dark-mode') {
@@ -437,7 +474,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
 
         const sortedCategories = Object.keys(groupedGames).sort((a, b) => {
             if (a === 'Event') return -1;
-            return 0; // Simplified sort
+            return 0; 
         });
 
         sortedCategories.forEach(category => {
@@ -459,7 +496,6 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                 
                 card.onclick = () => {
                     if (game.status !== 'unavailable') {
-                        // Pass data to next page
                         localStorage.setItem('selectedGame', JSON.stringify(game));
                         window.location.href = 'topup.html';
                     }
@@ -487,10 +523,35 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         });
     }
 
-    // MODIFIED: Slider Logic (Updated to match user.html - Infinite Loop & Fit)
+    // UPDATED: Slider Logic (Indicators + Touch Scroll)
     function updateSliderPosition() {
         if (!slider) return;
         slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        updateDots();
+    }
+
+    function createDots(count) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'slider-dot';
+            if (i === 0) dot.classList.add('active');
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateDots() {
+        const dots = document.querySelectorAll('.slider-dot');
+        const totalSlides = dots.length;
+        if (totalSlides === 0) return;
+
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        let activeIndex = currentSlide - 1; 
+        if (currentSlide === 0) activeIndex = totalSlides - 1; 
+        if (currentSlide === totalSlides + 1) activeIndex = 0; 
+        
+        if (dots[activeIndex]) dots[activeIndex].classList.add('active');
     }
 
     function nextSlide() {
@@ -498,6 +559,15 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         if (totalSlidesWithClones <= 1) return;
         
         currentSlide++;
+        slider.style.transition = 'transform 0.5s ease-in-out';
+        updateSliderPosition();
+    }
+
+    function prevSlide() {
+        const totalSlidesWithClones = slider.children.length;
+        if (totalSlidesWithClones <= 1) return;
+
+        currentSlide--;
         slider.style.transition = 'transform 0.5s ease-in-out';
         updateSliderPosition();
     }
@@ -518,6 +588,8 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     slideDiv.innerHTML = `<img src="${url}" alt="Promo Banner">`;
                     slider.appendChild(slideDiv);
                 });
+                
+                createDots(imageUrls.length);
 
                 if (imageUrls.length > 1) {
                     const firstClone = slider.firstElementChild.cloneNode(true);
@@ -536,6 +608,13 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                             setTimeout(() => {
                                 slider.style.transition = 'transform 0.5s ease-in-out';
                             });
+                        } else if (currentSlide <= 0) {
+                            currentSlide = totalSlidesWithClones - 2;
+                            slider.style.transition = 'none';
+                            updateSliderPosition();
+                            setTimeout(() => {
+                                slider.style.transition = 'transform 0.5s ease-in-out';
+                            });
                         }
                     });
                     
@@ -546,6 +625,35 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     setTimeout(() => {
                         slider.style.transition = 'transform 0.5s ease-in-out';
                     });
+                    
+                    // Touch Event Listeners for Manual Scrolling
+                    slider.addEventListener('touchstart', (e) => {
+                        clearInterval(slideInterval);
+                        startX = e.touches[0].clientX;
+                        isDragging = true;
+                    });
+                    
+                    slider.addEventListener('touchmove', (e) => {
+                        if (!isDragging) return;
+                        moveX = e.touches[0].clientX;
+                    });
+                    
+                    slider.addEventListener('touchend', () => {
+                        isDragging = false;
+                        if (!startX || !moveX) return;
+                        
+                        const diff = startX - moveX;
+                        if (diff > 50) {
+                            nextSlide();
+                        } else if (diff < -50) {
+                            prevSlide();
+                        }
+                        
+                        startX = null;
+                        moveX = null;
+                        slideInterval = setInterval(nextSlide, 3000);
+                    });
+
                 } else {
                     currentSlide = 0;
                     updateSliderPosition();
@@ -561,26 +669,30 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         }
     }
 
+    // UPDATED: Marquee Logic with Separator
     function initMarquee() {
         db.collection('settings').doc('notice').onSnapshot(doc => {
             if (doc.exists && doc.data().text) {
-                document.getElementById('headerMarquee').innerText = doc.data().text;
+                let text = doc.data().text;
+                // Replace Bengali Danda or Full Stop with Custom Separator
+                const separator = '<span class="marquee-separator">|</span>';
+                text = text.replace(/([।\.])/g, '$1 ' + separator + ' ');
+                
+                document.getElementById('headerMarquee').innerHTML = text;
             }
         });
     }
 
+    // UPDATED: Online Status Logic (Green/Red Dot)
     function initOnlineStatus() {
         db.collection('settings').doc('onlineStatus').onSnapshot(doc => {
-            const statusIndicator = document.getElementById('onlineStatus');
-            const statusText = document.getElementById('onlineStatusText');
+            const statusDot = document.getElementById('headerStatusDot');
             if (doc.exists && doc.data().isOnline) {
-                statusIndicator.classList.remove('offline');
-                statusIndicator.classList.add('online');
-                statusText.innerText = 'Online';
+                statusDot.classList.remove('offline');
+                statusDot.classList.add('online');
             } else {
-                statusIndicator.classList.remove('online');
-                statusIndicator.classList.add('offline');
-                statusText.innerText = 'Offline';
+                statusDot.classList.remove('online');
+                statusDot.classList.add('offline');
             }
         });
     }
@@ -624,7 +736,6 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                         clearInterval(eventTimerInterval);
                         timerEl.parentElement.innerHTML = "EXPIRED";
                         
-                        // FIX: Disable cards in event section when expired
                         const eventCards = document.querySelectorAll('#eventSectionContainer .game-card');
                         eventCards.forEach(card => {
                             card.classList.add('disabled');
@@ -638,9 +749,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
                     
-                    const f = (n) => n < 10 ? '0' + n : n; // Helper to add zero padding
-                    
-                    // Logic: Hide days if 0, keep in single line
+                    const f = (n) => n < 10 ? '0' + n : n;
                     const daysStr = days > 0 ? `${f(days)}d ` : '';
                     timerEl.innerHTML = daysStr + `${f(hours)}:${f(minutes)}:${f(seconds)}`;
                     
