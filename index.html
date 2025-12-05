@@ -70,19 +70,45 @@ body {
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1px solid rgba(255,255,255,0.05); }
-.header-brand { display: flex; align-items: center; gap: 12px; }
-.header-logo { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; background-color: var(--primary-purple); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.header-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: var(--primary-text-color); }
+.header-brand { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+
+/* MODIFIED: Removed background color */
+.header-logo { 
+    width: 42px; height: 42px; 
+    border-radius: 12px; 
+    object-fit: cover; 
+    background-color: transparent; /* Changed from var(--primary-purple) */
+    /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); Optional: Remove shadow if needed */
+}
+
+/* MODIFIED: Added clamp for responsive font size and nowrap to prevent breaking */
+.header-title { 
+    font-size: clamp(16px, 5vw, 20px); 
+    font-weight: 800; 
+    letter-spacing: -0.5px; 
+    color: var(--primary-text-color); 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .header .profile-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.header-right-icons { display: flex; align-items: center; gap: 15px; }
+.header-right-icons { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
 
 /* Wallet in Header */
 #headerWalletDisplay {
     display: none; align-items: center; gap: 8px;
     background-color: var(--light-purple); padding: 6px 12px; border-radius: 20px;
+    white-space: nowrap; /* MODIFIED: Prevent breaking */
 }
 #headerWalletDisplay i { color: var(--primary-purple); }
-#headerWalletBalance { font-size: 14px; font-weight: 700; color: var(--primary-text-color); }
+
+/* MODIFIED: Added clamp for responsive font size */
+#headerWalletBalance { 
+    font-size: clamp(12px, 4vw, 14px); 
+    font-weight: 700; 
+    color: var(--primary-text-color); 
+}
 
 /* Marquee */
 .marquee-wrapper {
@@ -101,7 +127,14 @@ body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1p
 .slider-container { width: 100%; height: 180px; margin-bottom: 30px; border-radius: var(--border-radius-large); overflow: hidden; position: relative; box-shadow: var(--soft-shadow); }
 .slider { display: flex; height: 100%; transition: transform 0.5s ease-in-out; }
 .slide { min-width: 100%; height: 100%; }
-.slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* MODIFIED: Changed object-fit to fill/contain to prevent cutting off */
+.slide img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: fill; /* Use 'fill' to force fit the box, or 'contain' to show full image with gaps */
+    display: block; 
+}
 
 /* Game Grid & Cards */
 .category-section { margin-bottom: 30px; }
@@ -316,6 +349,11 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
     let currentUser = null;
     let eventTimerInterval = null;
 
+    // Slider Variables
+    const slider = document.querySelector('.slider');
+    let currentSlide = 0;
+    let slideInterval;
+
     // Theme Check
     if (localStorage.getItem('theme') === 'dark-mode') {
         document.body.classList.add('dark-mode');
@@ -449,27 +487,78 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         });
     }
 
+    // MODIFIED: Slider Logic (Updated to match user.html - Infinite Loop & Fit)
+    function updateSliderPosition() {
+        if (!slider) return;
+        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    function nextSlide() {
+        const totalSlidesWithClones = slider.children.length;
+        if (totalSlidesWithClones <= 1) return;
+        
+        currentSlide++;
+        slider.style.transition = 'transform 0.5s ease-in-out';
+        updateSliderPosition();
+    }
+
     async function loadSlider() {
-        const slider = document.querySelector('.slider');
         try {
             const doc = await db.collection('settings').doc('slider').get();
+            slider.innerHTML = ''; 
+
             if (doc.exists && doc.data().imageUrls) {
-                doc.data().imageUrls.forEach(url => {
+                const imageUrls = doc.data().imageUrls.filter(url => url); 
+
+                if (imageUrls.length === 0) return;
+
+                imageUrls.forEach(url => {
                     const slideDiv = document.createElement('div');
                     slideDiv.className = 'slide';
-                    slideDiv.innerHTML = `<img src="${url}">`;
+                    slideDiv.innerHTML = `<img src="${url}" alt="Promo Banner">`;
                     slider.appendChild(slideDiv);
                 });
-                // Simple auto slide logic
-                let current = 0;
-                if(slider.children.length > 1) {
-                    setInterval(() => {
-                        current = (current + 1) % slider.children.length;
-                        slider.style.transform = `translateX(-${current * 100}%)`;
-                    }, 3000);
+
+                if (imageUrls.length > 1) {
+                    const firstClone = slider.firstElementChild.cloneNode(true);
+                    const lastClone = slider.lastElementChild.cloneNode(true);
+
+                    slider.appendChild(firstClone);
+                    slider.insertBefore(lastClone, slider.firstElementChild);
+
+                    slider.addEventListener('transitionend', () => {
+                        const totalSlidesWithClones = slider.children.length;
+                        
+                        if (currentSlide >= totalSlidesWithClones - 1) {
+                            currentSlide = 1; 
+                            slider.style.transition = 'none'; 
+                            updateSliderPosition();
+                            setTimeout(() => {
+                                slider.style.transition = 'transform 0.5s ease-in-out';
+                            });
+                        }
+                    });
+                    
+                    currentSlide = 1; 
+                    slider.style.transition = 'none';
+                    updateSliderPosition();
+                     
+                    setTimeout(() => {
+                        slider.style.transition = 'transform 0.5s ease-in-out';
+                    });
+                } else {
+                    currentSlide = 0;
+                    updateSliderPosition();
                 }
             }
-        } catch (e) { console.error(e); }
+        } catch (error) {
+            console.error("Error loading slider images:", error);
+        } finally {
+            clearInterval(slideInterval);
+            if (slider.children.length > 1) { 
+                slideInterval = setInterval(nextSlide, 3000);
+            }
+        }
     }
 
     function initMarquee() {
