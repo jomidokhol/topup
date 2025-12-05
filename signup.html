@@ -95,6 +95,27 @@ body {
     box-shadow: 0 8px 20px rgba(123, 97, 255, 0.25); 
 }
 .btn:active { transform: scale(0.98); }
+
+/* --- GOOGLE BUTTON CSS ADDED --- */
+.google-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; background: var(--card-bg-color); color: var(--primary-text-color);
+    border: 1px solid #dadce0; border-radius: var(--border-radius-medium);
+    padding: 15px; font-size: 15px; font-weight: 500;
+    cursor: pointer; margin-top: 15px; transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.google-btn:hover { background-color: var(--background-color); border-color: var(--primary-purple); }
+.google-btn img { width: 20px; height: 20px; margin-right: 12px; }
+.divider {
+    text-align: center; margin: 20px 0; position: relative;
+}
+.divider span {
+    background-color: var(--card-bg-color); padding: 0 10px; color: var(--secondary-text-color); font-size: 12px; position: relative; z-index: 1;
+}
+.divider::before {
+    content: ''; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e0e0e0; z-index: 0;
+}
 </style>
 </head>
 <body>
@@ -121,6 +142,14 @@ body {
                 <i class="fa-solid fa-eye password-toggle-icon" onclick="togglePasswordVisibility(this)"></i>
             </div>
             <button class="btn" onclick="handleSignUp()">সাইন আপ</button>
+
+            <!-- GOOGLE BUTTON SECTION -->
+            <div class="divider"><span>অথবা</span></div>
+            <button class="google-btn" onclick="handleGoogleLogin()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+                Sign in with Google
+            </button>
+            <!-- END GOOGLE BUTTON SECTION -->
             
             <p class="form-link"> ইতোমধ্যে অ্যাকাউন্ট আছে? <span onclick="window.location.href='login.html'">লগইন করুন</span></p>
             
@@ -226,6 +255,46 @@ body {
             alert('সাইন আপ করতে সমস্যা হয়েছে: ' + error.message); 
             btn.innerText = 'সাইন আপ';
             btn.disabled = false;
+        }
+    }
+
+    // --- GOOGLE LOGIN FUNCTION ADDED ---
+    async function handleGoogleLogin() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const btn = document.querySelector('.google-btn');
+        btn.style.opacity = '0.7';
+        
+        try {
+            const result = await auth.signInWithPopup(provider);
+            const user = result.user;
+
+            // Check if User Exists in Database
+            const userDoc = await db.collection('users').doc(user.uid).get();
+
+            if (!userDoc.exists) {
+                // Create New User Document
+                await db.collection('users').doc(user.uid).set({
+                    name: user.displayName,
+                    email: user.email,
+                    profileId: `GS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                    walletBalance: 0,
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    photoURL: user.photoURL 
+                });
+            } else {
+                // Check if blocked
+                if (userDoc.data().status === 'blocked') {
+                    await auth.signOut();
+                    alert('আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে।');
+                    btn.style.opacity = '1';
+                    return;
+                }
+            }
+            // Auto redirect handled by onAuthStateChanged
+        } catch (error) {
+            alert("Google সাইন আপ এরর: " + error.message);
+            btn.style.opacity = '1';
         }
     }
 
