@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Roboto font for Footer */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
@@ -58,6 +60,8 @@ body {
     position: relative;
     padding: 20px;
     padding-top: 0;
+    /* Footer full width adjust */
+    overflow-x: hidden;
 }
 
 /* Header */
@@ -276,9 +280,6 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
 }
 .nav-item-center .icon-bg i { color: white; font-size: 24px; margin: 0; }
 
-/* Footer */
-#copyright-footer { text-align: center; padding: 20px 0; color: var(--secondary-text-color); font-size: 12px; margin-top: 20px; }
-
 /* Popup */
 .modal { display: none; position: fixed; z-index: 1002; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
 .modal-content { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--border-radius-large); width: 90%; max-width: 400px; box-shadow: var(--soft-shadow); text-align: center; }
@@ -287,6 +288,136 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
 .close-btn { color: #8E8E93; font-size: 28px; font-weight: bold; cursor: pointer; }
 #popupImage { width: 100%; max-height: 220px; object-fit: cover; border-radius: var(--border-radius-medium); margin-top: 15px; display: none; }
 .popup-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: var(--primary-purple); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; }
+
+/* =========================================
+   NEW FOOTER STYLES (Light & Dark Mode)
+   ========================================= */
+.footer {
+    font-family: 'Roboto', sans-serif;
+    padding: 30px 20px 20px 20px;
+    margin-top: 50px;
+    position: relative;
+    margin-left: -20px;
+    margin-right: -20px;
+    transition: all 0.3s;
+}
+
+.footer-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Light Mode Footer (Default) */
+.footer {
+    background-color: #ffffff;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    color: #333;
+}
+.footer h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    margin-top: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-purple);
+}
+.footer h3:first-child { margin-top: 0; }
+.footer p { font-size: 14px; line-height: 1.6; margin-bottom: 5px; color: #555; }
+.footer .brand-name {
+    font-weight: bold; font-size: 14px; margin-bottom: 15px; display: block;
+    color: #1D1D1F;
+}
+
+.play-store-btn {
+    display: inline-block;
+    background-color: #000;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 5px;
+    width: 150px;
+    cursor: pointer;
+    transition: 0.3s;
+    overflow: hidden;
+}
+.play-store-btn img { width: 100%; display: block; }
+
+.support-box {
+    background: #F5F5F7;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--primary-purple);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex; align-items: center;
+    cursor: pointer; transition: all 0.3s ease;
+    text-decoration: none;
+}
+.support-box .icon { font-size: 28px; padding-right: 15px; color: var(--primary-purple); }
+.support-box .divider {
+    width: 1px; height: 35px; background: rgba(0,0,0,0.1); margin-right: 15px;
+}
+.support-box .text-content { display: flex; flex-direction: column; }
+.support-box .time-text { font-size: 11px; color: var(--accent-green); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.support-box .support-text { font-size: 16px; font-weight: 700; color: #1D1D1F; }
+
+.footer-copyright {
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05);
+    text-align: center; font-size: 12px; color: #888;
+}
+.footer-copyright span { color: var(--primary-purple); font-weight: 600; }
+
+/* Terms in Footer Styling */
+#termsContainer { 
+    background: transparent !important; 
+    padding: 0 0 20px 0 !important; 
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 30px !important;
+}
+#termsTitle { color: inherit !important; font-size: 16px !important; }
+#termsText { color: inherit !important; opacity: 0.8; font-size: 13px !important; }
+
+/* DARK MODE FOOTER (Gaming Style from Request) */
+body.dark-mode .footer {
+    background: linear-gradient(180deg, #1a0b2e 0%, #0d001a 100%);
+    color: #ffffff;
+    border-top: 3px solid #00e5ff;
+    box-shadow: 0 -5px 20px rgba(0, 229, 255, 0.4), inset 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+body.dark-mode .footer::before {
+    content: ''; position: absolute; top: -3px; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, #ff00ff, #00e5ff, #ff00ff);
+    background-size: 200% 200%; animation: rgbFlow 3s linear infinite; z-index: 10;
+}
+@keyframes rgbFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+body.dark-mode .footer h3 { color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+body.dark-mode .footer p { color: #d1d1d1; }
+body.dark-mode .footer .brand-name { color: #ff00ff; text-shadow: 0 0 5px rgba(255, 0, 255, 0.5); }
+
+body.dark-mode .play-store-btn { border-color: #333; }
+body.dark-mode .play-store-btn:hover { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+
+body.dark-mode .support-box {
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.2);
+    border-left: 4px solid #6a0dad;
+}
+body.dark-mode .support-box:hover {
+    background: rgba(0, 229, 255, 0.05); border-color: #00e5ff;
+    border-left: 4px solid #ff00ff; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); transform: scale(1.02);
+}
+body.dark-mode .support-box .icon { color: #ffffff; }
+body.dark-mode .support-box:hover .icon { color: #00e5ff; text-shadow: 0 0 10px #00e5ff; }
+body.dark-mode .support-box .divider { background: linear-gradient(to bottom, transparent, #00e5ff, transparent); }
+body.dark-mode .support-box .time-text { color: #00e5ff; }
+body.dark-mode .support-box .support-text { color: #fff; }
+
+body.dark-mode .footer-copyright { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+body.dark-mode .footer-copyright span { color: #00e5ff; }
+
+/* Dark Mode Terms */
+body.dark-mode #termsContainer { border-bottom: 1px solid rgba(255,255,255,0.1); }
 </style>
 </head>
 <body>
@@ -298,13 +429,13 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
             <h1 class="header-title" id="headerAppName">Vercel Top Up</h1>
         </div>
         <div class="header-right-icons">
-            <!-- UPDATED: Wallet with Click Action -->
+            <!-- Wallet -->
             <div id="headerWalletDisplay" onclick="checkAuthAndGo('add-money.html')">
                 <i class="fa-solid fa-wallet"></i>
                 <span id="headerWalletBalance">৳ 0.00</span>
             </div>
             
-            <!-- UPDATED: Profile Wrapper with Status Dot -->
+            <!-- Profile Wrapper -->
             <div class="profile-wrapper">
                 <i id="headerGuestIcon" class="fa-solid fa-circle-user" style="font-size: 38px; color: var(--secondary-text-color); cursor: pointer; display: block;" onclick="window.location.href='login.html'"></i>
                 <img id="headerProfileAvatar" src="https://i.ibb.co/74CkxSP/avatar.png" alt="Avatar" class="profile-avatar" onclick="window.location.href='profile.html'" style="display: none;">
@@ -320,7 +451,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         </div>
     </div>
 
-    <!-- UPDATED: Slider Container with Dots -->
+    <!-- Slider Container -->
     <div class="slider-container">
         <div class="slider"></div>
         <div class="slider-dots"></div>
@@ -329,12 +460,57 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
     <div id="eventSectionContainer"></div>
     <div id="homeCategoriesContainer"></div>
     
-    <div id="termsContainer" style="padding: 20px; background: var(--card-bg-color); border-radius: var(--border-radius-medium); display: none; margin-bottom: 20px;">
-        <h3 id="termsTitle" style="font-size: 18px; margin-bottom: 10px;"></h3>
-        <p id="termsText" style="font-size: 14px; color: var(--secondary-text-color); white-space: pre-wrap;"></p>
-    </div>
+    <!-- NEW FOOTER START -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Terms Section (Moved Here) -->
+            <div id="termsContainer" style="display: none;">
+                <h3 id="termsTitle" style="font-size: 18px; margin-bottom: 10px;"></h3>
+                <p id="termsText" style="white-space: pre-wrap;"></p>
+            </div>
 
-    <footer id="copyright-footer"></footer>
+            <!-- Address Section -->
+            <h3>STAY CONNECTED</h3>
+            <span class="brand-name" id="footerBrandName">VERCEL TOP UP</span>
+            <p id="footerAddress">Lalpur Road # 17, Natore, Rajshahi</p>
+
+            <!-- App Section -->
+            <h3>OUR MOBILE APP</h3>
+            <p>Download our official app</p>
+            <a id="playStoreLink" href="#" target="_blank" class="play-store-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play">
+            </a>
+
+            <!-- Support Center -->
+            <h3>SUPPORT CENTER</h3>
+
+            <!-- WhatsApp -->
+            <a href="#" id="whatsappBtn" class="support-box" target="_blank">
+                <div class="icon"><i class="fab fa-whatsapp"></i></div>
+                <div class="divider"></div>
+                <div class="text-content">
+                    <span class="time-text" id="whatsappStatus">Status: Offline</span>
+                    <span class="support-text">WhatsApp Live Support</span>
+                </div>
+            </a>
+
+            <!-- Telegram -->
+            <a href="#" id="telegramBtn" class="support-box" target="_blank">
+                <div class="icon"><i class="fab fa-telegram-plane"></i></div>
+                <div class="divider"></div>
+                <div class="text-content">
+                    <span class="time-text" id="telegramStatus">Status: Offline</span>
+                    <span class="support-text">Telegram Live Support</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-copyright" id="footerCopyright">
+            &copy; <span id="copyrightYear">2025</span> <span id="footerCopyrightBrand">Vercel Top Up</span>. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- NEW FOOTER END -->
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
@@ -396,7 +572,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         document.body.classList.add('dark-mode');
     }
 
-    // --- AUTH OBSERVER UPDATED FOR GOOGLE LOGIN ---
+    // --- AUTH OBSERVER ---
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
@@ -404,20 +580,15 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
             document.getElementById('headerProfileAvatar').style.display = 'block';
             document.getElementById('headerWalletDisplay').style.display = 'flex';
             
-            // 1. Immediate UI update from Google Auth Data (Fast)
             if (user.photoURL) {
                 document.getElementById('headerProfileAvatar').src = user.photoURL;
             }
 
-            // 2. Firestore Sync (Source of Truth for Wallet & Data)
             db.collection('users').doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
-                    
-                    // Prioritize Firestore photo -> Google Photo -> Default
                     const finalPhoto = data.photoURL || user.photoURL || "https://i.ibb.co/74CkxSP/avatar.png";
                     document.getElementById('headerProfileAvatar').src = finalPhoto;
-                    
                     document.getElementById('headerWalletBalance').innerText = `৳ ${parseFloat(data.walletBalance || 0).toFixed(2)}`;
                 }
             });
@@ -447,7 +618,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         initPopup();
         loadTerms();
         initEvent();
-        loadFooter();
+        loadFooterDynamicData(); // Updated Footer loading
     }
 
     async function loadBranding() {
@@ -455,10 +626,15 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
             const doc = await db.collection('settings').doc('branding').get();
             if (doc.exists) {
                 const { appName, profileIconUrl } = doc.data();
-                if (appName) document.getElementById('headerAppName').innerText = appName;
+                if (appName) {
+                    document.getElementById('headerAppName').innerText = appName;
+                    document.getElementById('footerBrandName').innerText = appName.toUpperCase();
+                    document.getElementById('footerCopyrightBrand').innerText = appName;
+                }
                 if (profileIconUrl) document.getElementById('headerAppLogo').src = profileIconUrl;
             }
         } catch (e) { console.error(e); }
+        document.getElementById('copyrightYear').innerText = new Date().getFullYear();
     }
 
     async function loadGames() {
@@ -533,7 +709,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         });
     }
 
-    // UPDATED: Slider Logic (Indicators + Touch Scroll)
+    // Slider Logic
     function updateSliderPosition() {
         if (!slider) return;
         slider.style.transform = `translateX(-${currentSlide * 100}%)`;
@@ -556,18 +732,15 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         if (totalSlides === 0) return;
 
         dots.forEach(dot => dot.classList.remove('active'));
-        
         let activeIndex = currentSlide - 1; 
         if (currentSlide === 0) activeIndex = totalSlides - 1; 
         if (currentSlide === totalSlides + 1) activeIndex = 0; 
-        
         if (dots[activeIndex]) dots[activeIndex].classList.add('active');
     }
 
     function nextSlide() {
         const totalSlidesWithClones = slider.children.length;
         if (totalSlidesWithClones <= 1) return;
-        
         currentSlide++;
         slider.style.transition = 'transform 0.5s ease-in-out';
         updateSliderPosition();
@@ -576,7 +749,6 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
     function prevSlide() {
         const totalSlidesWithClones = slider.children.length;
         if (totalSlidesWithClones <= 1) return;
-
         currentSlide--;
         slider.style.transition = 'transform 0.5s ease-in-out';
         updateSliderPosition();
@@ -589,111 +761,76 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
 
             if (doc.exists && doc.data().imageUrls) {
                 const imageUrls = doc.data().imageUrls.filter(url => url); 
-
                 if (imageUrls.length === 0) return;
-
                 imageUrls.forEach(url => {
                     const slideDiv = document.createElement('div');
                     slideDiv.className = 'slide';
                     slideDiv.innerHTML = `<img src="${url}" alt="Promo Banner">`;
                     slider.appendChild(slideDiv);
                 });
-                
                 createDots(imageUrls.length);
-
                 if (imageUrls.length > 1) {
                     const firstClone = slider.firstElementChild.cloneNode(true);
                     const lastClone = slider.lastElementChild.cloneNode(true);
-
                     slider.appendChild(firstClone);
                     slider.insertBefore(lastClone, slider.firstElementChild);
-
                     slider.addEventListener('transitionend', () => {
                         const totalSlidesWithClones = slider.children.length;
-                        
                         if (currentSlide >= totalSlidesWithClones - 1) {
                             currentSlide = 1; 
                             slider.style.transition = 'none'; 
                             updateSliderPosition();
-                            setTimeout(() => {
-                                slider.style.transition = 'transform 0.5s ease-in-out';
-                            });
+                            setTimeout(() => { slider.style.transition = 'transform 0.5s ease-in-out'; });
                         } else if (currentSlide <= 0) {
                             currentSlide = totalSlidesWithClones - 2;
                             slider.style.transition = 'none';
                             updateSliderPosition();
-                            setTimeout(() => {
-                                slider.style.transition = 'transform 0.5s ease-in-out';
-                            });
+                            setTimeout(() => { slider.style.transition = 'transform 0.5s ease-in-out'; });
                         }
                     });
-                    
                     currentSlide = 1; 
                     slider.style.transition = 'none';
                     updateSliderPosition();
-                     
-                    setTimeout(() => {
-                        slider.style.transition = 'transform 0.5s ease-in-out';
-                    });
+                    setTimeout(() => { slider.style.transition = 'transform 0.5s ease-in-out'; });
                     
-                    // Touch Event Listeners for Manual Scrolling
                     slider.addEventListener('touchstart', (e) => {
                         clearInterval(slideInterval);
                         startX = e.touches[0].clientX;
                         isDragging = true;
                     });
-                    
                     slider.addEventListener('touchmove', (e) => {
                         if (!isDragging) return;
                         moveX = e.touches[0].clientX;
                     });
-                    
                     slider.addEventListener('touchend', () => {
                         isDragging = false;
                         if (!startX || !moveX) return;
-                        
                         const diff = startX - moveX;
-                        if (diff > 50) {
-                            nextSlide();
-                        } else if (diff < -50) {
-                            prevSlide();
-                        }
-                        
-                        startX = null;
-                        moveX = null;
+                        if (diff > 50) nextSlide(); else if (diff < -50) prevSlide();
+                        startX = null; moveX = null;
                         slideInterval = setInterval(nextSlide, 3000);
                     });
-
                 } else {
-                    currentSlide = 0;
-                    updateSliderPosition();
+                    currentSlide = 0; updateSliderPosition();
                 }
             }
-        } catch (error) {
-            console.error("Error loading slider images:", error);
-        } finally {
+        } catch (error) { console.error("Error loading slider images:", error); } finally {
             clearInterval(slideInterval);
-            if (slider.children.length > 1) { 
-                slideInterval = setInterval(nextSlide, 3000);
-            }
+            if (slider.children.length > 1) slideInterval = setInterval(nextSlide, 3000);
         }
     }
 
-    // UPDATED: Marquee Logic with Separator
     function initMarquee() {
         db.collection('settings').doc('notice').onSnapshot(doc => {
             if (doc.exists && doc.data().text) {
                 let text = doc.data().text;
-                // Replace Bengali Danda or Full Stop with Custom Separator
                 const separator = '<span class="marquee-separator">|</span>';
                 text = text.replace(/([।\.])/g, '$1 ' + separator + ' ');
-                
                 document.getElementById('headerMarquee').innerHTML = text;
             }
         });
     }
 
-    // UPDATED: Online Status Logic (Green/Red Dot)
     function initOnlineStatus() {
         db.collection('settings').doc('onlineStatus').onSnapshot(doc => {
             const statusDot = document.getElementById('headerStatusDot');
@@ -745,24 +882,20 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
                     if (distance < 0) {
                         clearInterval(eventTimerInterval);
                         timerEl.parentElement.innerHTML = "EXPIRED";
-                        
                         const eventCards = document.querySelectorAll('#eventSectionContainer .game-card');
                         eventCards.forEach(card => {
                             card.classList.add('disabled');
                             card.onclick = null; 
                         });
-                        
                         return;
                     }
                     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    
                     const f = (n) => n < 10 ? '0' + n : n;
                     const daysStr = days > 0 ? `${f(days)}d ` : '';
                     timerEl.innerHTML = daysStr + `${f(hours)}:${f(minutes)}:${f(seconds)}`;
-                    
                 }, 1000);
             } else if (wrapper) {
                 wrapper.style.display = 'none';
@@ -771,19 +904,50 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         });
     }
     
+    // TERMS: Moved to Footer inside
     async function loadTerms() {
         const doc = await db.collection('settings').doc('terms').get();
         if(doc.exists && doc.data().text) {
-            document.getElementById('termsTitle').innerText = doc.data().title || 'Terms';
+            document.getElementById('termsTitle').innerText = doc.data().title || 'Terms & Conditions';
             document.getElementById('termsText').innerText = doc.data().text;
             document.getElementById('termsContainer').style.display = 'block';
         }
     }
 
-    async function loadFooter() {
-        const doc = await db.collection('settings').doc('branding').get();
-        const appName = doc.exists ? doc.data().appName : 'Your Shop';
-        document.getElementById('copyright-footer').textContent = `© ${new Date().getFullYear()} ${appName}. All Rights Reserved.`;
+    // --- NEW FOOTER DYNAMIC DATA LOADING ---
+    function loadFooterDynamicData() {
+        // 1. Location and Social Links
+        db.collection('settings').doc('contact').onSnapshot(doc => {
+            if(doc.exists) {
+                const data = doc.data();
+                
+                // Address
+                if(data.address) document.getElementById('footerAddress').innerText = data.address;
+                
+                // WhatsApp
+                const waBtn = document.getElementById('whatsappBtn');
+                if(data.whatsappLink) waBtn.href = data.whatsappLink;
+                if(data.whatsappStatus) document.getElementById('whatsappStatus').innerText = "Status: " + data.whatsappStatus;
+                
+                // Telegram
+                const tgBtn = document.getElementById('telegramBtn');
+                if(data.telegramLink) tgBtn.href = data.telegramLink;
+                if(data.telegramStatus) document.getElementById('telegramStatus').innerText = "Status: " + data.telegramStatus;
+            }
+        });
+
+        // 2. Mobile App Link
+        db.collection('settings').doc('app').onSnapshot(doc => {
+            if(doc.exists) {
+                const data = doc.data();
+                const playBtn = document.getElementById('playStoreLink');
+                if(data.playStoreLink) {
+                    playBtn.href = data.playStoreLink;
+                } else {
+                    playBtn.removeAttribute('href'); // inactive if no link
+                }
+            }
+        });
     }
 
     initHome();
