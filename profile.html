@@ -208,15 +208,28 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
         section.style.display = section.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Auth & Profile Data
+    // --- AUTH & PROFILE DATA UPDATED ---
     auth.onAuthStateChanged(user => {
         if (user) {
+            // 1. Immediate Update from Google Auth (Faster)
+            if (user.displayName) document.getElementById('profileNameDisplay').innerText = user.displayName;
+            if (user.photoURL) document.getElementById('profileScreenAvatar').src = user.photoURL;
+
+            // 2. Sync with Database (Source of Truth)
             db.collection('users').doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
-                    document.getElementById('profileNameDisplay').innerText = data.name || "User";
+                    
+                    // Name: Database > Auth > Default
+                    const finalName = data.name || user.displayName || "User";
+                    document.getElementById('profileNameDisplay').innerText = finalName;
+                    
+                    // ID: Only in Database
                     document.getElementById('profileIdDisplay').innerText = data.profileId || "N/A";
-                    document.getElementById('profileScreenAvatar').src = data.photoURL || "https://i.ibb.co/74CkxSP/avatar.png";
+                    
+                    // Photo: Database > Auth > Default
+                    const finalPhoto = data.photoURL || user.photoURL || "https://i.ibb.co/74CkxSP/avatar.png";
+                    document.getElementById('profileScreenAvatar').src = finalPhoto;
                 }
             });
         } else {
