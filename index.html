@@ -59,16 +59,24 @@ body {
     min-height: 100vh;
     position: relative;
     padding: 20px;
-    padding-top: 0;
+    padding-top: 80px; /* UPDATED: Added space for fixed header */
     /* Footer full width adjust */
     overflow-x: hidden;
 }
 
-/* Header */
+/* Header - UPDATED for Fixed Position */
 .header { 
     display: flex; justify-content: space-between; align-items: center; 
-    padding: 10px 20px; margin-bottom: 0px; position: sticky;
-    top: 0; margin-left: -20px; margin-right: -20px; margin-top: 0;
+    padding: 10px 20px; margin-bottom: 0px; 
+    position: fixed; /* UPDATED: Changed from sticky to fixed */
+    width: 100%; /* UPDATED */
+    max-width: 480px; /* UPDATED: Constrain width */
+    left: 50%; /* UPDATED: Center align logic start */
+    transform: translateX(-50%); /* UPDATED: Center align logic end */
+    top: 0; 
+    margin-left: 0; /* UPDATED: Removed negative margins */
+    margin-right: 0; /* UPDATED: Removed negative margins */
+    margin-top: 0;
     z-index: 999; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     background-color: rgba(255, 255, 255, 0.6); 
     border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -99,7 +107,7 @@ body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1p
 .profile-wrapper { position: relative; display: flex; align-items: center; }
 .header .profile-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid var(--card-bg-color); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-/* UPDATED: Status Dot */
+/* Status Dot */
 .status-dot {
     position: absolute;
     bottom: 2px;
@@ -115,7 +123,7 @@ body.dark-mode .header { background-color: rgba(0, 0, 0, 0.6); border-bottom: 1p
 .status-dot.offline { background-color: #FF3B30; }
 
 
-/* Wallet in Header - UPDATED: Clickable */
+/* Wallet in Header */
 #headerWalletDisplay {
     display: none; align-items: center; gap: 8px;
     background-color: var(--light-purple); padding: 6px 12px; border-radius: 20px;
@@ -366,7 +374,6 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
     margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05);
     text-align: center; font-size: 12px; color: #888;
 }
-/* UPDATE: Specific highlight class for brand name */
 .footer-copyright .copyright-brand-highlight { color: var(--primary-purple); font-weight: 600; }
 
 /* Terms in Footer Styling - UPDATED */
@@ -377,14 +384,14 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
     margin-bottom: 30px !important;
 }
 #termsTitle { 
-    color: inherit !important; /* Will inherit from footer color */
+    color: var(--primary-purple) !important; /* UPDATED: Highlight color */
     font-size: 18px !important; 
     font-weight: 700;
     margin-bottom: 10px;
 }
 #termsText { 
-    color: inherit !important; /* Will inherit from footer color */
-    opacity: 1 !important; /* Removed opacity 0.8 to match other text */
+    color: inherit !important; 
+    opacity: 1 !important; 
     font-size: 14px !important; 
     line-height: 1.6;
 }
@@ -429,10 +436,11 @@ body.dark-mode .footer-copyright .copyright-brand-highlight { color: #00e5ff; }
 
 /* Dark Mode Terms */
 body.dark-mode #termsContainer { border-bottom: 1px solid rgba(255,255,255,0.1); }
+body.dark-mode #termsTitle { color: #00e5ff !important; }
 
 /* --- Support Chat Button & Modal Styles (Added from user.html) --- */
 .support-fab {
-    position: fixed; /* Fixed as requested */
+    position: fixed; 
     bottom: 130px; 
     right: 20px;
     width: 56px;
@@ -576,7 +584,6 @@ body.dark-mode .support-chat-footer { border-color: rgba(255,255,255,0.05); }
 
         <!-- Copyright -->
         <div class="footer-copyright" id="footerCopyright">
-            <!-- UPDATED: Year is plain text, Brand is highlighted -->
             &copy; <span id="copyrightYear">2025</span> <span id="footerCopyrightBrand" class="copyright-brand-highlight">Vercel Top Up</span>. All Rights Reserved.
         </div>
     </footer>
@@ -594,7 +601,7 @@ body.dark-mode .support-chat-footer { border-color: rgba(255,255,255,0.05); }
         <div class="nav-item" onclick="checkAuthAndGo('profile.html')"> <i class="fa-regular fa-user"></i> <span>প্রোফাইল</span> </div>
     </nav>
     
-    <!-- Support Chat Button (Added) -->
+    <!-- Support Chat Button -->
     <div class="support-fab" id="supportBtn">
         <i class="fa-solid fa-headset"></i>
         <span class="chat-popover">কোন সমস্যা ?</span>
@@ -615,7 +622,7 @@ body.dark-mode .support-chat-footer { border-color: rgba(255,255,255,0.05); }
     </div>
 </div>
 
-<!-- Support Modal (Added) -->
+<!-- Support Modal -->
 <div id="supportModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
