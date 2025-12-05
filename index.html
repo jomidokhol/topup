@@ -396,7 +396,7 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
         document.body.classList.add('dark-mode');
     }
 
-    // Auth Listener
+    // --- AUTH OBSERVER UPDATED FOR GOOGLE LOGIN ---
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
@@ -404,10 +404,20 @@ body.dark-mode .modal-header { border-color: rgba(255,255,255,0.05); }
             document.getElementById('headerProfileAvatar').style.display = 'block';
             document.getElementById('headerWalletDisplay').style.display = 'flex';
             
+            // 1. Immediate UI update from Google Auth Data (Fast)
+            if (user.photoURL) {
+                document.getElementById('headerProfileAvatar').src = user.photoURL;
+            }
+
+            // 2. Firestore Sync (Source of Truth for Wallet & Data)
             db.collection('users').doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
-                    document.getElementById('headerProfileAvatar').src = data.photoURL || "https://i.ibb.co/74CkxSP/avatar.png";
+                    
+                    // Prioritize Firestore photo -> Google Photo -> Default
+                    const finalPhoto = data.photoURL || user.photoURL || "https://i.ibb.co/74CkxSP/avatar.png";
+                    document.getElementById('headerProfileAvatar').src = finalPhoto;
+                    
                     document.getElementById('headerWalletBalance').innerText = `৳ ${parseFloat(data.walletBalance || 0).toFixed(2)}`;
                 }
             });
