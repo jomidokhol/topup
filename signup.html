@@ -258,7 +258,7 @@ body {
         }
     }
 
-    // --- GOOGLE LOGIN FUNCTION ADDED ---
+    // --- UPDATED GOOGLE LOGIN FUNCTION ---
     async function handleGoogleLogin() {
         const provider = new firebase.auth.GoogleAuthProvider();
         const btn = document.querySelector('.google-btn');
@@ -267,24 +267,27 @@ body {
         try {
             const result = await auth.signInWithPopup(provider);
             const user = result.user;
+            const userRef = db.collection('users').doc(user.uid);
 
-            // Check if User Exists in Database
-            const userDoc = await db.collection('users').doc(user.uid).get();
+            const doc = await userRef.get();
 
-            if (!userDoc.exists) {
-                // Create New User Document
-                await db.collection('users').doc(user.uid).set({
-                    name: user.displayName,
+            if (!doc.exists) {
+                // First time login - Create Database Entry
+                await userRef.set({
+                    name: user.displayName || "No Name",
                     email: user.email,
                     profileId: `GS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                     walletBalance: 0,
                     status: 'active',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    photoURL: user.photoURL 
+                    photoURL: user.photoURL || "https://i.ibb.co/74CkxSP/avatar.png",
+                    uid: user.uid
                 });
+                console.log("New Google user created in Firestore");
             } else {
                 // Check if blocked
-                if (userDoc.data().status === 'blocked') {
+                const userData = doc.data();
+                if (userData.status === 'blocked') {
                     await auth.signOut();
                     alert('আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে।');
                     btn.style.opacity = '1';
@@ -293,6 +296,7 @@ body {
             }
             // Auto redirect handled by onAuthStateChanged
         } catch (error) {
+            console.error(error);
             alert("Google সাইন আপ এরর: " + error.message);
             btn.style.opacity = '1';
         }
