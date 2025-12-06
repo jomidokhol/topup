@@ -180,6 +180,9 @@ body {
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Flag to prevent race condition (auto redirect before saving data)
+    let isGoogleLoggingIn = false;
+
     // Theme Check
     if (localStorage.getItem('theme') === 'dark-mode') {
         document.body.classList.add('dark-mode');
@@ -194,7 +197,8 @@ body {
 
     // Check auth status
     auth.onAuthStateChanged(user => {
-        if (user) {
+        // Only redirect if NOT currently processing a Google Login
+        if (user && !isGoogleLoggingIn) {
             window.location.href = 'index.html';
         }
     });
@@ -258,10 +262,15 @@ body {
         }
     }
 
-    // --- UPDATED GOOGLE LOGIN FUNCTION ---
+    // --- UPDATED GOOGLE LOGIN FUNCTION WITH RACE CONDITION FIX ---
     async function handleGoogleLogin() {
+        // Set flag to true to stop auto-redirect
+        isGoogleLoggingIn = true;
+        
         const provider = new firebase.auth.GoogleAuthProvider();
         const btn = document.querySelector('.google-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Processing...';
         btn.style.opacity = '0.7';
         
         try {
@@ -272,7 +281,7 @@ body {
             const doc = await userRef.get();
 
             if (!doc.exists) {
-                // First time login - Create Database Entry
+                // Wait for the data to be saved BEFORE redirecting
                 await userRef.set({
                     name: user.displayName || "No Name",
                     email: user.email,
@@ -290,15 +299,22 @@ body {
                 if (userData.status === 'blocked') {
                     await auth.signOut();
                     alert('আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে।');
+                    btn.innerHTML = originalText;
                     btn.style.opacity = '1';
+                    isGoogleLoggingIn = false; // Reset flag
                     return;
                 }
             }
-            // Auto redirect handled by onAuthStateChanged
+            
+            // Manually redirect now that DB operations are done
+            window.location.href = 'index.html';
+
         } catch (error) {
             console.error(error);
             alert("Google সাইন আপ এরর: " + error.message);
+            btn.innerHTML = originalText;
             btn.style.opacity = '1';
+            isGoogleLoggingIn = false; // Reset flag on error
         }
     }
 
