@@ -111,33 +111,6 @@ body {
 .quantity-input { width: 60px; text-align: center; font-size: 18px; font-weight: 700; background: transparent; border: none; color: var(--primary-text-color); }
 .quantity-input:focus { outline: none; }
 
-/* Tutorial Button Animation (Updated for Text Color Change & Left Align) */
-.how-to-btn {
-    display: inline-block;
-    margin-top: 15px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
-    
-    /* Rainbow Text Logic */
-    background: linear-gradient(90deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
-    background-size: 400%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    
-    animation: rainbow 5s linear infinite;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.how-to-btn:active { transform: scale(0.95); }
-
-@keyframes rainbow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
 /* Payment Grid */
 .payment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
 .payment-item { 
@@ -205,13 +178,10 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
 
     <!-- Step 2: Product List -->
     <div class="topup-section">
-        <h3 class="title"><span class="step-number">2</span>টপ-আপ অ্যামাউন্ট</h3>
+        <h3 class="title"><span class="step-number">2</span>রিচার্জ অ্যামাউন্ট বেছে নিন</h3>
         <div class="package-grid" id="packageGrid"></div>
         
         <div id="quantityContainer"></div>
-        
-        <!-- How To Button (Rainbow Text, Left Aligned) -->
-        <a id="howToVideoBtn" href="#" target="_blank" class="how-to-btn" style="display: none;">• কিভাবে টপ-আপ করব?</a>
     </div>
 
     <!-- Step 3: Payment -->
@@ -310,15 +280,6 @@ body.dark-mode .bottom-nav { background-color: rgba(28, 28, 30, 0.9); border-col
         if(selectedGameData.description && selectedGameData.description.trim() !== '') {
             document.getElementById('gameDescriptionText').innerText = selectedGameData.description;
             descContainer.style.display = 'block';
-        }
-
-        // Tutorial Link Button Logic
-        const howToBtn = document.getElementById('howToVideoBtn');
-        if (selectedGameData.tutorialLink && selectedGameData.tutorialLink.trim() !== '') {
-            howToBtn.href = selectedGameData.tutorialLink;
-            howToBtn.style.display = 'inline-block';
-        } else {
-            howToBtn.style.display = 'none';
         }
 
         // Render Packages
